@@ -40,17 +40,40 @@ public void OnConfigsExecuted()
     BotVerify();
 }
 
+public void OnPluginEnd()
+{
+    JSONObject json = new JSONObject();
+    json.SetString("sessionKey", g_session);
+    json.SetInt64("qq", g_qqnumber);
+
+    char buffer[128];
+    FormatEx(buffer, sizeof(buffer), "%s/release", g_host);
+    HTTPRequest request = new HTTPRequest(buffer);
+    request.Post(json, OnReleaseCallback);
+
+    delete json;
+}
+
 stock void BotVerify()
 {
     JSONObject json = new JSONObject();
     json.SetString("verifyKey", g_verifykey);
 
     char buffer[128];
-    FormatEx(buffer, sizeof(buffer), "%s/verify");
+    FormatEx(buffer, sizeof(buffer), "%s/verify", g_host);
     HTTPRequest request = new HTTPRequest(buffer);
     request.Post(json, OnVerifyCallback);
 
     delete json; 
+}
+
+void OnReleaseCallback(HTTPResponse response, any value)
+{
+    if (response.Status != HTTPStatus_OK) 
+    {
+        LogE("Error occur in OnReleaseCallback");
+        return;
+    }
 }
 
 void OnVerifyCallback(HTTPResponse response, any value)
