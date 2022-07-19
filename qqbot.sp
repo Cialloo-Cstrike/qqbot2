@@ -127,6 +127,37 @@ void OnBindCallback(HTTPResponse response, any value)
     }
 }
 
+stock void SendMessageToQQGroup(char[] group_number, char[] message)
+{
+    JSONObject json = new JSONObject();
+    JSONObject messageJson = new JSONObject();
+    JSONArray messageChain = new JSONArray();
+    messageJson.SetString("type", "Plain");
+    messageJson.SetString("text", message);
+    messageChain.Push(messageJson);
+    json.SetString("sessionKey", g_session);
+    json.SetInt64("target", group_number);
+    json.Set("messageChain", messageChain);
+
+    char buffer[128];
+    FormatEx(buffer, sizeof(buffer), "%s/sendGroupMessage", g_host);
+    HTTPRequest request = new HTTPRequest(buffer);
+    request.Post(json, OnSendMessageToGroup);
+
+    delete messageJson;
+    delete messageChain;
+    delete json;
+}
+
+void OnSendMessageToGroup(HTTPResponse response, any value)
+{
+    if (response.Status != HTTPStatus_OK) 
+    {
+        LogE("Error occur in OnSendMessageToGroup");
+        return;
+    }
+}
+
 stock void LogE(char[] message)
 {
     PrintToServer(message);
