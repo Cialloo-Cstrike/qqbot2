@@ -1,6 +1,10 @@
 ## Sourcemod QQBot Library
 You should compile qqbot.sp and put qqbot.smx to ```addons/sourcemod/plugins/```, then write your own qqbot.  
-Dependence: [ripext](https://forums.alliedmods.net/showthread.php?t=298024)  
+
+Dependence: 
+- [ripext](https://forums.alliedmods.net/showthread.php?t=298024)  
+- [Mirai](https://github.com/mamoe/mirai)
+
 Example:
 ```
 #include <sourcemod>
