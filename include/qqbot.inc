@@ -3,3 +3,5 @@
   #endinput
 #endif
 #define _qqbot_included_
+
+native void MessageToQQGroup(char[] group_number, char[] message);

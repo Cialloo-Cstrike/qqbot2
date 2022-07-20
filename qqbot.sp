@@ -16,6 +16,12 @@ public Plugin myinfo =
     url = "cialloo.com"
 };
 
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
+{
+	CreateNative("MessageToQQGroup", Native_MessageToQQGroup);
+	return APLRes_Success;
+}
+
 public void OnPluginStart()
 {
     CreateConVar("cialloo_qqbot_number", "07215201314");
@@ -162,4 +168,12 @@ stock void LogE(char[] message)
 {
     PrintToServer(message);
     LogError(message);
+}
+
+any Native_MessageToQQGroup(Handle plugin, int numParams)
+{
+    char message[1024], group_number[32];
+    GetNativeString(1, group_number, sizeof(group_number));
+    GetNativeString(2, message, sizeof(message));
+    SendMessageToQQGroup(group_number, message);
 }
