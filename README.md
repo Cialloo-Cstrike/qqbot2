@@ -1,6 +1,7 @@
-# Sourcemod QQ机器人库
-依赖: [ripext](https://forums.alliedmods.net/showthread.php?t=298024)  
-示例:
+## Sourcemod QQBot Library
+You should compile qqbot.sp and put qqbot.smx to ```addons/sourcemod/plugins/```, then write your own qqbot.  
+Dependence: [ripext](https://forums.alliedmods.net/showthread.php?t=298024)  
+Example:
 ```
 #include <sourcemod>
 #include <qqbot>
