@@ -18,6 +18,7 @@ public Plugin myinfo =
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {
+	CreateNative("MessageToQQFriend", Native_MessageToQQFriend);
 	CreateNative("MessageToQQGroup", Native_MessageToQQGroup);
 	return APLRes_Success;
 }
@@ -133,6 +134,28 @@ void OnBindCallback(HTTPResponse response, any value)
     }
 }
 
+stock void SendMessageToQQFriend(char[] friend_number, char[] message)
+{
+    JSONObject json = new JSONObject();
+    JSONObject messageJson = new JSONObject();
+    JSONArray messageChain = new JSONArray();
+    messageJson.SetString("type", "Plain");
+    messageJson.SetString("text", message);
+    messageChain.Push(messageJson);
+    json.SetString("sessionKey", g_session);
+    json.SetInt64("target", friend_number);
+    json.Set("messageChain", messageChain);
+
+    char buffer[128];
+    FormatEx(buffer, sizeof(buffer), "%s/sendFriendMessage", g_host);
+    HTTPRequest request = new HTTPRequest(buffer);
+    request.Post(json, OnSendMessageToFriend);
+
+    delete messageJson;
+    delete messageChain;
+    delete json;
+}
+
 stock void SendMessageToQQGroup(char[] group_number, char[] message)
 {
     JSONObject json = new JSONObject();
@@ -155,6 +178,15 @@ stock void SendMessageToQQGroup(char[] group_number, char[] message)
     delete json;
 }
 
+void OnSendMessageToFriend(HTTPResponse response, any value)
+{
+    if (response.Status != HTTPStatus_OK) 
+    {
+        LogE("Error occur in OnSendMessageToFriend");
+        return;
+    }
+}
+
 void OnSendMessageToGroup(HTTPResponse response, any value)
 {
     if (response.Status != HTTPStatus_OK) 
@@ -168,6 +200,14 @@ stock void LogE(char[] message)
 {
     PrintToServer(message);
     LogError(message);
+}
+
+any Native_MessageToQQFriend(Handle plugin, int numParams)
+{
+    char message[1024], friend_number[32];
+    GetNativeString(1, friend_number, sizeof(friend_number));
+    GetNativeString(2, message, sizeof(message));
+    SendMessageToQQFriend(friend_number, message);
 }
 
 any Native_MessageToQQGroup(Handle plugin, int numParams)
